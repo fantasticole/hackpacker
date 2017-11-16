@@ -22,34 +22,28 @@ export default class App extends React.Component {
   }
   fetchMovies () {
     this.setState({ isLoading: true })
-    return fetch('https://facebook.github.io/react-native/movies.json')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.setState({
-          isLoading: false,
-          text: this.formatMovies(responseJson.movies),
-          view: 'movies',
+    return setTimeout(() => {
+      fetch('https://facebook.github.io/react-native/movies.json')
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            isLoading: false,
+            text: this.formatMovies(responseJson.movies),
+            view: 'movies',
+          });
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    }, 5000);
   }
   formatMovies (movieData) {
-    // let movieString = movieData.reduce((str, movie) => {
-    //   return str + `${movie.title}, ${movie.releaseYear}` + '\n'
-    // }, '');
-    // return movieString;
-    let movies = movieData.map(movie => {
-      return (<Text key={movie.title} style={styles.movie}>{movie.title}, {movie.releaseYear}</Text>);
-    });
-    return (
-      <View style={{height: '100%', width: '100%'}}>{movies}</View>
-    )
+    let movieString = movieData.reduce((str, movie) => {
+      return str + `${movie.title}, ${movie.releaseYear}` + '\n'
+    }, '');
+    return movieString;
   }
   onPressChangeMoney () {
-    // alert('Change Money, baby!');
     this.setState({ view: 'money' });
   }
   render() {
@@ -76,17 +70,16 @@ export default class App extends React.Component {
               style={styles.textInput}
               placeholder="What do you want?"
               onChangeText={(text) => this.setState({text})}
-              // onSubmitEditing={alert(this.state.text)}
             /> :
             null
           }
-          <View style={[styles.topMargin, {backgroundColor: 'pink'}]}>
+          <View style={[styles.topMargin, {backgroundColor: '#fff'}]}>
             {this.state.isLoading === true ?
               <ActivityIndicator /> :
               null
             }
             {(this.state.view === 'movies' || this.state.view === 'money') && this.state.isLoading === false ?
-              <Text style={{backgroundColor: 'yellow', padding: 5}}>{this.state.text}</Text> :
+              <Text style={{padding: 15, textAlign: 'center'}}>{this.state.text}</Text> :
               null
             }
           </View>
@@ -100,7 +93,6 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: 'repeat',
-    // resizeMode: 'cover', // or 'stretch'
     position: 'absolute',
     top: 0,
     left: 0,
@@ -125,10 +117,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-  movie: {
-    flex: 1,
-    // textAlign: 'center',
-  },
   text: {
     padding: 15,
     backgroundColor: '#fff',
@@ -137,7 +125,8 @@ const styles = StyleSheet.create({
   textInput: {
     height: 40,
     backgroundColor: '#fff',
-    paddingLeft: 5,
+    paddingLeft: 10,
+    fontSize: 14,
   },
   topMargin: {
     marginTop: 30,
