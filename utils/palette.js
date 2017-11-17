@@ -1,9 +1,11 @@
 export const palette = {
-  navy: '#043a77',
   beige: '#ffebcd',
-  teal: '#2cfecb',
+  black: '#000',
   blue: '#1483c5',
-  purple: '#9584c5',
   lilac: '#cfa2c8',
+  navy: '#043a77',
   pink: '#efbfce',
+  purple: '#9584c5',
+  teal: '#2cfecb',
+  white: '#fff',
 }
