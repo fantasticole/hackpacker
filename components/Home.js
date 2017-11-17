@@ -57,7 +57,7 @@ export default class Home extends React.Component {
               style={styles.buttonImage}
               transform={[{ rotate: '180deg' }]}
               />
-            <Text style={styles.button}>Exchange Rates</Text>
+            <Text style={styles.button}>View Rates</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -80,7 +80,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'relative',
     height: 45,
-    backgroundColor: palette.purple,
+    backgroundColor: palette.grey,
+    borderRadius: 3,
   },
   buttonImage: {
     flex: 1,

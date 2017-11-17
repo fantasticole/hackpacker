@@ -35,24 +35,6 @@ export default class ExchangeRates extends React.Component {
   }
 
   componentDidMount () {
-    fetch('https://finance.google.com/finance/converter?a=1&from=AED&to=AZN')
-      .then((response) => {
-        let html = response._bodyText,
-            rateIndex = html.search("bld") + 4,
-            rateString = html.slice(rateIndex, rateIndex + 15),
-            rate = rateString.slice(0, rateString.indexOf(' '))
-        // console.log('response:', response)
-        // let responseHTML = document.createElement("html");
-        // responseHTML.innerHTML = response;
-
-        // rate = response._bodyText.search("bld");
-        // console.log('html:', html)
-        // console.log('rateString:', rateString)
-        console.log('rate:', `${rate} AZN for each AED`)
-      })
-      .catch((error) => {
-        console.error(error);
-      });
     return fetch('https://api.fixer.io/latest?base=USD')
       // .then((response) => console.log())
       .then((response) => response.json())
@@ -94,10 +76,13 @@ export default class ExchangeRates extends React.Component {
     return (
       <View style={sharedStyles.container}>
         <View style={{backgroundColor: palette.white, padding: 15}}>
-          <Text style={styles.heading}>1 USD on {date}:</Text>
+          <Text style={sharedStyles.heading}>1 USD on {date}:</Text>
           <ScrollView style={{height: '70%'}}>
             {this.state.rates.map(rate => (
-              <Text key={rate.code}>{rate.country}: {rate.rate}</Text>
+              <View key={rate.code} style={sharedStyles.table}>
+                <Text style={{flex: 1}}>{rate.rate}</Text>
+                <Text style={{flex: 3}}>{rate.country}</Text>
+              </View>
             ))}
           </ScrollView>
         </View>
@@ -107,9 +92,4 @@ export default class ExchangeRates extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  heading: {
-    paddingBottom: 15,
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
 });
