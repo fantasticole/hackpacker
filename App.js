@@ -12,7 +12,6 @@ import Home from './components/Home';
 import CurrencyExchange from './components/CurrencyExchange';
 import ExchangeRates from './components/ExchangeRates';
 import FadeInView from './components/FadeInView';
-import Movies from './components/Movies';
 
 const HackPacker = TabNavigator(
   // screens
@@ -20,7 +19,6 @@ const HackPacker = TabNavigator(
     Home: { screen: Home },
     CurrencyExchange: { screen: CurrencyExchange },
     ExchangeRates: { screen: ExchangeRates },
-    Movies: { screen: Movies },
   },
   // config
   {

@@ -60,16 +60,6 @@ export default class Home extends React.Component {
             <Text style={styles.button}>Exchange Rates</Text>
           </TouchableOpacity>
         </View>
-        <View style={[styles.buttonContainer, sharedStyles.topMargin]} >
-          <TouchableOpacity onPress={this.onPressMovies.bind(this)}>
-            <Image
-              source={require('../images/fade.png')}
-              style={styles.buttonImage}
-              transform={[{ rotate: '180deg' }]}
-              />
-            <Text style={styles.button}>Fetch Movies</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     );
   }
