@@ -3,7 +3,7 @@ import { palette } from './palette';
 export const sharedStyles = {
   container: {
     flex: 1,
-    justifyContent: 'center',
+    marginTop: 100,
     width: '80%',
     left: '10%',
   },

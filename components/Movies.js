@@ -27,21 +27,23 @@ export default class Movies extends React.Component {
     text: null,
   }
 
-  conponentDidMount () {
-    console.log('fetch!')
-    return setTimeout(() => {
-      fetch('https://facebook.github.io/react-native/movies.json')
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.setState({
-            isLoading: false,
-            text: this.formatMovies(responseJson.movies).bind(this),
-          });
-        })
-        .catch((error) => {
-          console.error(error);
+  constructor (props) {
+    super(props);
+    this.formatMovies = this.formatMovies.bind(this);
+  }
+
+  componentDidMount () {
+    return fetch('https://facebook.github.io/react-native/movies.json')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          text: this.formatMovies(responseJson.movies),
         });
-    }, 5000);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
   
   formatMovies (movieData) {

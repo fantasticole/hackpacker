@@ -25,6 +25,7 @@ export default class CurrencyExchange extends React.Component {
 
   state = {
     currency: null,
+    text: null,
   }
 
   render () {
@@ -36,7 +37,8 @@ export default class CurrencyExchange extends React.Component {
           onChangeText={(text) => this.setState({text})}
           style={[styles.textInput, sharedStyles.topMargin]}
         />
-        <Text style={styles.text}>CURRENCY</Text>
+        {this.state.text ? <Text style={styles.text}>{this.state.text}</Text> : null}
+        <Text style={[styles.text, sharedStyles.topMargin]}>CURRENCY</Text>
         <Picker
           selectedValue={this.state.currency}
           onValueChange={(itemValue, itemIndex) => this.setState({currency: itemValue})}>
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    backgroundColor: palette.black,
+    backgroundColor: palette.grey,
     color: palette.white,
     paddingLeft: 10,
     fontSize: 14,

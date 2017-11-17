@@ -22,10 +22,6 @@ export default class Home extends React.Component {
     ),
   }
 
-  constructor (props) {
-    super(props);
-  }
-
   onPressChangeMoney () {
     let { navigate } = this.props.navigation;
 
@@ -38,22 +34,42 @@ export default class Home extends React.Component {
     navigate('Movies');
   }
 
+  onPressRates () {
+    let { navigate } = this.props.navigation;
+
+    navigate('ExchangeRates');
+  }
+
   render () {
     return (
       <View style={sharedStyles.container}>
         <Text style={styles.title}>HackPacker</Text>
-        <TouchableOpacity
-          onPress={this.onPressMovies.bind(this)}
-          style={sharedStyles.topMargin}
-          >
-          <Text style={styles.button}>Fetch Movies</Text>
-        </TouchableOpacity>
-        <TouchableHighlight
-          onPress={this.onPressChangeMoney.bind(this)}
-          style={sharedStyles.topMargin}
-          >
-          <Text style={styles.button}>Change Money</Text>
-        </TouchableHighlight>
+        <View style={[styles.buttonContainer, sharedStyles.topMargin]}>
+          <Image source={require('../images/fade.png')} style={styles.buttonImage} />
+          <TouchableHighlight onPress={this.onPressChangeMoney.bind(this)}>
+            <Text style={styles.button}>Change Money</Text>
+          </TouchableHighlight>
+        </View>
+        <View style={[styles.buttonContainer, sharedStyles.topMargin]} >
+          <TouchableOpacity onPress={this.onPressRates.bind(this)}>
+            <Image
+              source={require('../images/fade.png')}
+              style={styles.buttonImage}
+              transform={[{ rotate: '180deg' }]}
+              />
+            <Text style={styles.button}>Exchange Rates</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.buttonContainer, sharedStyles.topMargin]} >
+          <TouchableOpacity onPress={this.onPressMovies.bind(this)}>
+            <Image
+              source={require('../images/fade.png')}
+              style={styles.buttonImage}
+              transform={[{ rotate: '180deg' }]}
+              />
+            <Text style={styles.button}>Fetch Movies</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -61,13 +77,30 @@ export default class Home extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#000',
-    color: '#fff',
+    // backgroundColor: palette.grey,
+    backgroundColor: 'transparent',
+    // color: palette.white,
+    color: palette.black,
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 30,
     paddingRight: 30,
     textAlign: 'center',
+  },
+  buttonContainer: {
+    position: 'relative',
+    height: 45,
+    backgroundColor: palette.purple,
+  },
+  buttonImage: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'stretch',
+    opacity: 0.2,
   },
   title: {
     backgroundColor: 'transparent',
@@ -75,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 52,
     fontWeight: 'bold',
     textAlign: 'center',
-    textShadowColor: palette.navy,
+    textShadowColor: palette.grey,
     textShadowOffset: {width: 2, height: 2},
     textShadowRadius: 5,
   },

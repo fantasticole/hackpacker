@@ -2,6 +2,7 @@ export const palette = {
   beige: '#ffebcd',
   black: '#000',
   blue: '#1483c5',
+  grey: '#666',
   lilac: '#cfa2c8',
   navy: '#043a77',
   pink: '#efbfce',
