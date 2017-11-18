@@ -4,6 +4,7 @@ import {
   Picker,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View
@@ -34,6 +35,7 @@ export default class CurrencyExchange extends React.Component {
     // these are only set once currencies are selected
     origin: 'USD',
     target: 'GBP',
+    showHistory: false,
   }
 
   constructor (props) {
@@ -86,6 +88,10 @@ export default class CurrencyExchange extends React.Component {
     // might not update quickly enough for the function to use
     // the correct amount
     this.convertCurrency(amount, origin, target);
+  }
+
+  toggleHistory () {
+    this.setState({ showHistory: !this.state.showHistory });
   }
 
   updateConversion (stateKey, value) {
@@ -145,12 +151,19 @@ export default class CurrencyExchange extends React.Component {
             ))}
           </Picker>
         </View>
-        {this.state.history.length ? 
+        {this.state.history.length ?
+          <View style={sharedStyles.table}>
+            <Text style={[styles.text, styles.subheading, {flex: 5, textAlign: 'left'}]}>Show History</Text>
+            <Switch style={{flex: 1}} onValueChange={() => this.toggleHistory()} value={this.state.showHistory} />
+          </View> :
+          null
+        }
+        {this.state.showHistory ?
           <ScrollView style={{ maxHeight: 150, marginTop: 15 }}>
             {this.state.history.map((conversion, i) => (
               <View key={i} style={sharedStyles.table}>
-                <Text style={[styles.text, {flex: 1}]}>{conversion.amount} {conversion.origin}</Text>
-                <Text style={[styles.text, {flex: 1}]}>{conversion.converted} {conversion.target}</Text>
+                <Text style={styles.text}>{conversion.amount} {conversion.origin}</Text>
+                <Text style={styles.text}>{conversion.converted} {conversion.target}</Text>
               </View>
             ))}
           </ScrollView> :

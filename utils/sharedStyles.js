@@ -23,7 +23,6 @@ export const sharedStyles = {
     height: 26,
   },
   table: {
-    // flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
