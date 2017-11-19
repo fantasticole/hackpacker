@@ -1,19 +1,21 @@
 import React from 'react';
 import {
   Image,
-  Picker,
-  ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
-  View
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Transitioner } from 'react-navigation';
 
 import { currencies } from '../utils/currencies';
 import { palette } from '../utils/palette';
 import { sharedStyles } from '../utils/sharedStyles';
+
+import CurrencyPicker from './CurrencyPicker';
+import SearchHistory from './SearchHistory';
 
 export default class CurrencyExchange extends React.Component {
   static navigationOptions = {
@@ -34,16 +36,29 @@ export default class CurrencyExchange extends React.Component {
     // currencies to convert immediately, since otherwise
     // these are only set once currencies are selected
     origin: 'USD',
+    pickFor: 'origin',
     target: 'GBP',
     showHistory: false,
+    showPicker: false,
   }
 
   constructor (props) {
     super(props);
     this.convertCurrency = this.convertCurrency.bind(this);
+    this.fetchData = this.fetchData.bind(this);
+    this.updateConversion = this.updateConversion.bind(this);
+    this.delay = 0;
   }
 
   convertCurrency (amount, origin, target) {
+    console.log('this.delay 0:', this.delay)
+    clearTimeout(this.delay);
+    this.delay = setTimeout(() => this.fetchData(amount, origin, target), 700);
+    console.log('this.delay:', this.delay)
+  }
+
+  fetchData (amount, origin, target) {
+    console.log('hi!')
     // get origin and target currencies from state
     // convert current amount
     fetch(`https://finance.google.com/finance/converter?a=${amount}&from=${origin}&to=${target}`)
@@ -71,6 +86,13 @@ export default class CurrencyExchange extends React.Component {
       });
   }
 
+  onPressChange (pickFor) {
+    this.setState({
+      pickFor,
+      showPicker: true,
+    });
+  }
+
   onTextChanged (text) {
     let amount = '',
         acceptableChars = '0123456789.',
@@ -94,20 +116,49 @@ export default class CurrencyExchange extends React.Component {
     this.setState({ showHistory: !this.state.showHistory });
   }
 
-  updateConversion (stateKey, value) {
-    let { amount, origin, target } = this.state;
+  updateConversion (value) {
+    let { amount, origin, pickFor, target } = this.state;
 
-    if (stateKey === 'origin') origin = value;
+    if (pickFor === 'origin') origin = value;
     else target = value;
     // set origin or target currency on the state
-    this.setState({ [stateKey]: value });
+    this.setState({
+      [pickFor]: value,
+      showPicker: false,
+    });
     // only update conversion if we have an amount to convert
     if (amount) this.convertCurrency(amount, origin, target);
   }
 
-  render () {
-    let currencyOptions = Object.keys(currencies);
+  renderCurrencyPicker () {
+    let { pickFor, showPicker } = this.state;
 
+    if (showPicker) {
+      if (pickFor === 'origin') {
+        return (
+          <CurrencyPicker updateConversion={this.updateConversion} value={this.state.origin} />
+        )
+      }
+      return (
+        <CurrencyPicker updateConversion={this.updateConversion} value={this.state.target} />
+      )
+    }
+  }
+
+  renderHistory () {
+    if (this.state.showHistory) return (<SearchHistory history={this.state.history} />);
+  }
+
+  renderToggle () {
+    if (this.state.history.length) return (
+      <View style={sharedStyles.table}>
+        <Text style={[styles.text, styles.subheading, {flex: 5, textAlign: 'left'}]}>Show History</Text>
+        <Switch style={{flex: 1}} onValueChange={() => this.toggleHistory()} value={this.state.showHistory} />
+      </View>
+    );
+  }
+
+  render () {
     return (
       <View style={[sharedStyles.container, { marginTop: 65 }]}>
         <View style={styles.borderBottom}>
@@ -124,14 +175,10 @@ export default class CurrencyExchange extends React.Component {
             style={[styles.textInput, styles.text]}
             value = {this.state.amount}
           />
-          <Picker
-            style={{flex: 1, top: -88}}
-            selectedValue={this.state.origin}
-            onValueChange={(itemValue, itemIndex) => this.updateConversion('origin', itemValue)}>
-            {currencyOptions.map(opt => (
-              <Picker.Item key={opt} label={opt} value={opt} />
-            ))}
-          </Picker>
+          <Text style={styles.heading}>{this.state.origin}</Text>
+          <TouchableOpacity onPress={() => this.onPressChange('origin')}>
+            <Text style={{backgroundColor: 'pink', fontFamily: 'fontAwesome'}}>{'\uf013'}</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.borderBottom}>
           <Text style={styles.heading}>TO</Text>
@@ -142,33 +189,14 @@ export default class CurrencyExchange extends React.Component {
         </View>
         <View style={[sharedStyles.table, { height: 100, paddingTop: 30, overflow: 'hidden' }]}>
           <Text style={[styles.text, styles.converted ]}>{this.state.converted}</Text>
-          <Picker
-            style={{flex: 1, top: -88}}
-            selectedValue={this.state.target}
-            onValueChange={(itemValue, itemIndex) => this.updateConversion('target', itemValue)}>
-            {currencyOptions.map(opt => (
-              <Picker.Item key={opt} label={opt} value={opt} />
-            ))}
-          </Picker>
+          <Text style={styles.heading}>{this.state.target}</Text>
+          <TouchableOpacity onPress={() => this.onPressChange('target')}>
+            <Text style={{backgroundColor: 'pink', fontFamily: 'fontAwesome'}}>{'\uf013'}</Text>
+          </TouchableOpacity>
         </View>
-        {this.state.history.length ?
-          <View style={sharedStyles.table}>
-            <Text style={[styles.text, styles.subheading, {flex: 5, textAlign: 'left'}]}>Show History</Text>
-            <Switch style={{flex: 1}} onValueChange={() => this.toggleHistory()} value={this.state.showHistory} />
-          </View> :
-          null
-        }
-        {this.state.showHistory ?
-          <ScrollView style={{ maxHeight: 150, marginTop: 15 }}>
-            {this.state.history.map((conversion, i) => (
-              <View key={i} style={sharedStyles.table}>
-                <Text style={styles.text}>{conversion.amount} {conversion.origin}</Text>
-                <Text style={styles.text}>{conversion.converted} {conversion.target}</Text>
-              </View>
-            ))}
-          </ScrollView> :
-          null
-        }
+        {this.renderToggle()}
+        {this.renderHistory()}
+        {this.renderCurrencyPicker()}
       </View>
     );
   }

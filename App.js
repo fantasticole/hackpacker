@@ -1,10 +1,12 @@
 import React from 'react';
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 import {
+  ActivityIndicator,
   Image,
   StyleSheet,
   View
 } from 'react-native';
+import Expo from 'expo';
 
 import { palette } from './utils/palette';
 
@@ -39,14 +41,28 @@ const HackPacker = TabNavigator(
 );
 
 export default class App extends React.Component {
+  state = {
+    fontLoaded: false,
+  }
+
+  async componentDidMount () {
+    await Expo.Font.loadAsync({
+      'fontAwesome': require('./assets/fonts/fontawesome-webfont.ttf'),
+    });
+    this.setState({ fontLoaded: true });
+  }
+
   render () {
-    return (
-      <FadeInView duration={1000} style={styles.container}>
-        <Image blurRadius={3} source={require('./images/pattern1.png')} style={[styles.image, styles.backgroundImage]} />
-        <Image source={require('./images/fade.png')} style={[styles.image, styles.overlay]} />
-        <HackPacker />
-      </FadeInView>
-    );
+    if ( this.state.fontLoaded ) {
+      return (
+        <FadeInView duration={1000} style={styles.container}>
+          <Image blurRadius={3} source={require('./images/pattern1.png')} style={[styles.image, styles.backgroundImage]} />
+          <Image source={require('./images/fade.png')} style={[styles.image, styles.overlay]} />
+          <HackPacker />
+        </FadeInView>
+      );
+    }
+    return ( <ActivityIndicator /> );
   }
 }
 

@@ -10,8 +10,9 @@ export const sharedStyles = {
   container: {
     flex: 1,
     marginTop: 100,
-    width: '80%',
-    left: '10%',
+    width: '100%',
+    paddingLeft: '10%',
+    paddingRight: '10%',
   },
   heading: {
     paddingBottom: 15,
