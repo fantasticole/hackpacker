@@ -22,7 +22,7 @@ export default class CurrencyExchange extends React.Component {
     tabBarLabel: 'CurrencyExchange',
     tabBarIcon: ({ tintColor }) => (
       <Image
-        source={require('../images/icons/currency.png')}
+        source={require('../images/icons/arrows.png')}
         style={[sharedStyles.icon, {tintColor: tintColor}]}
       />
     ),
@@ -38,7 +38,6 @@ export default class CurrencyExchange extends React.Component {
     origin: 'USD',
     pickFor: 'origin',
     target: 'GBP',
-    showHistory: false,
     showPicker: false,
   }
 
@@ -93,7 +92,7 @@ export default class CurrencyExchange extends React.Component {
     });
   }
 
-  onTextChanged (text) {
+  onTextChanged (text, currency) {
     let amount = '',
         acceptableChars = '0123456789.',
         { origin, target } = this.state;
@@ -110,10 +109,6 @@ export default class CurrencyExchange extends React.Component {
     // might not update quickly enough for the function to use
     // the correct amount
     this.convertCurrency(amount, origin, target);
-  }
-
-  toggleHistory () {
-    this.setState({ showHistory: !this.state.showHistory });
   }
 
   updateConversion (value) {
@@ -145,57 +140,39 @@ export default class CurrencyExchange extends React.Component {
     }
   }
 
-  renderHistory () {
-    if (this.state.showHistory) return (<SearchHistory history={this.state.history} />);
-  }
-
-  renderToggle () {
-    if (this.state.history.length) return (
-      <View style={sharedStyles.table}>
-        <Text style={[styles.text, styles.subheading, {flex: 5, textAlign: 'left'}]}>Show History</Text>
-        <Switch style={{flex: 1}} onValueChange={() => this.toggleHistory()} value={this.state.showHistory} />
-      </View>
-    );
-  }
-
   render () {
     return (
-      <View style={[sharedStyles.container, { marginTop: 65 }]}>
-        <View style={styles.borderBottom}>
-          <Text style={styles.heading}>FROM</Text>
+      <View style={sharedStyles.container}>
+        <View style={sharedStyles.table}>
+          <View style={styles.currencyHeader}>
+            <Text style={styles.heading}>{this.state.origin}</Text>
+            <TouchableOpacity style={styles.button} onPress={() => this.onPressChange('origin')}>
+              <Text style={styles.gear}>{'\uf013'}</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.arrow}>{'\uf061'}</Text>
+          <View style={styles.currencyHeader}>
+            <Text style={styles.heading}>{this.state.target}</Text>
+            <TouchableOpacity style={styles.button} onPress={() => this.onPressChange('target')}>
+              <Text style={styles.gear}>{'\uf013'}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={sharedStyles.table}>
-          <Text style={[styles.subheading, {flex: 1}]}>AMOUNT</Text>
-          <Text style={[styles.subheading, {flex: 1}]}>CURRENCY</Text>
-        </View>
-        <View style={[sharedStyles.table, { height: 100, paddingTop: 30, overflow: 'hidden' }]}>
           <TextInput
             keyboardType='numeric'
-            onChangeText={(text) => this.onTextChanged(text)}
-            style={[styles.textInput, styles.text]}
-            value = {this.state.amount}
+            onChangeText={(text) => this.onTextChanged(text, 'amount')}
+            style={styles.textInput}
+            value={this.state.amount}
           />
-          <Text style={styles.heading}>{this.state.origin}</Text>
-          <TouchableOpacity onPress={() => this.onPressChange('origin')}>
-            <Text style={{backgroundColor: 'pink', fontFamily: 'fontAwesome'}}>{'\uf013'}</Text>
-          </TouchableOpacity>
+          <TextInput
+            keyboardType='numeric'
+            onChangeText={(text) => this.onTextChanged(text, 'converted')}
+            style={styles.textInput}
+            value={this.state.converted}
+          />
         </View>
-        <View style={styles.borderBottom}>
-          <Text style={styles.heading}>TO</Text>
-        </View>
-        <View style={sharedStyles.table}>
-          <Text style={[styles.subheading, {flex: 1}]}>AMOUNT</Text>
-          <Text style={[styles.subheading, {flex: 1}]}>CURRENCY</Text>
-        </View>
-        <View style={[sharedStyles.table, { height: 100, paddingTop: 30, overflow: 'hidden' }]}>
-          <Text style={[styles.text, styles.converted ]}>{this.state.converted}</Text>
-          <Text style={styles.heading}>{this.state.target}</Text>
-          <TouchableOpacity onPress={() => this.onPressChange('target')}>
-            <Text style={{backgroundColor: 'pink', fontFamily: 'fontAwesome'}}>{'\uf013'}</Text>
-          </TouchableOpacity>
-        </View>
-        {this.renderToggle()}
-        {this.renderHistory()}
+        <SearchHistory history={this.state.history} />
         {this.renderCurrencyPicker()}
       </View>
     );
@@ -203,22 +180,40 @@ export default class CurrencyExchange extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  borderBottom: {
-    ...sharedStyles.borderBottom,
-    margin: '25%',
-    marginTop: 0,
-    marginBottom: 0,
-    paddingBottom: 5,
-  },
-  converted: {
+  arrow: {
+    fontFamily: 'fontAwesome',
+    flex: 1,
     textAlign: 'center',
-    backgroundColor: 'transparent',
-    fontWeight: 'bold',
     fontSize: 16,
-    paddingTop: 12,
-    textShadowColor: palette.white,
-    textShadowOffset: {width: 2, height: 2},
-    textShadowRadius: 5,
+    paddingTop: 4,
+  },
+  button: {
+    marginLeft: 5,
+    borderRadius: 10,
+    justifyContent: 'center',
+    padding: 4,
+    height: 20,
+    marginTop: 2,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowColor: palette.grey,
+    shadowOpacity: 0.5,
+    backgroundColor: palette.purple,
+    borderColor: palette.beige,
+    borderWidth: 1,
+  },
+  currencyHeader: {
+    flex: 3,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    height: 24,
+  },
+  gear: {
+    color: palette.beige,
+    fontFamily: 'fontAwesome',
+    fontSize: 12,
   },
   heading: {
     ...sharedStyles.heading,
@@ -226,26 +221,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: 'transparent',
   },
-  subheading: {
-    padding: 15,
-    fontSize: 16,
-    color: palette.grey,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    backgroundColor: 'transparent',
-    textShadowColor: palette.white,
-    textShadowOffset: {width: 2, height: 2},
-    textShadowRadius: 5,
-    height: 50,    
-  },
-  text: {
-    flex: 1,
+  textInput: {
     height: 40,
     fontSize: 14,
-  },
-  textInput: {
-    backgroundColor: palette.white,
-    color: palette.grey,
+    backgroundColor: palette.grey,
+    color: palette.white,
     paddingLeft: 10,
+    marginTop: 30,
+    width: '45%',
   },
 });

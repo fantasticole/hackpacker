@@ -9,7 +9,7 @@ export const sharedStyles = {
   },
   container: {
     flex: 1,
-    marginTop: 100,
+    marginTop: 70,
     width: '100%',
     paddingLeft: '10%',
     paddingRight: '10%',

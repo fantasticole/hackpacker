@@ -18,7 +18,7 @@ export default class ExchangeRates extends React.Component {
     tabBarLabel: 'ExchangeRates',
     tabBarIcon: ({ tintColor }) => (
       <Image
-        source={require('../images/icons/arrows.png')}
+        source={require('../images/icons/currency.png')}
         style={[sharedStyles.icon, {tintColor: tintColor}]}
       />
     ),
