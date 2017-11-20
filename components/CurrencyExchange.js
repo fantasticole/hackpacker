@@ -50,14 +50,11 @@ export default class CurrencyExchange extends React.Component {
   }
 
   convertCurrency (amount, origin, target) {
-    console.log('this.delay 0:', this.delay)
     clearTimeout(this.delay);
-    this.delay = setTimeout(() => this.fetchData(amount, origin, target), 700);
-    console.log('this.delay:', this.delay)
+    this.delay = setTimeout(() => this.fetchData(amount, origin, target), 500);
   }
 
   fetchData (amount, origin, target) {
-    console.log('hi!')
     // get origin and target currencies from state
     // convert current amount
     fetch(`https://finance.google.com/finance/converter?a=${amount}&from=${origin}&to=${target}`)
@@ -68,17 +65,19 @@ export default class CurrencyExchange extends React.Component {
             converted = rateString.slice(0, rateString.indexOf(' '));
         // account for if the rate returned is not a number
         // TODO: account for all non-number situations
-        if (converted === "OCTYPE") converted = null;
-        // set the converted number on the state
-        this.setState({ converted });
-        this.setState({
-          history: this.state.history.concat({
-            amount,
-            converted,
-            origin,
-            target,
-          }),
-        });
+        if (converted === "OCTYPE") converted = 0;
+        if (converted) {
+          // set the converted number on the state
+          this.setState({ converted });
+          this.setState({
+            history: [{
+              amount,
+              converted,
+              origin,
+              target,
+            }, ...this.state.history]
+          });
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -150,7 +149,10 @@ export default class CurrencyExchange extends React.Component {
               <Text style={styles.gear}>{'\uf013'}</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.arrow}>{'\uf061'}</Text>
+          <View style={styles.arrowHeader}>
+            <Text style={[styles.arrow, styles.arrowTop]}>{'\uf177'}</Text>
+            <Text style={[styles.arrow, styles.arrowBottom]}>{'\uf178'}</Text>
+          </View>
           <View style={styles.currencyHeader}>
             <Text style={styles.heading}>{this.state.target}</Text>
             <TouchableOpacity style={styles.button} onPress={() => this.onPressChange('target')}>
@@ -182,10 +184,21 @@ export default class CurrencyExchange extends React.Component {
 const styles = StyleSheet.create({
   arrow: {
     fontFamily: 'fontAwesome',
-    flex: 1,
     textAlign: 'center',
-    fontSize: 16,
-    paddingTop: 4,
+    fontSize: 14,
+    backgroundColor: 'transparent',
+  },
+  arrowTop: {
+    top: 4,
+  },
+  arrowBottom: {
+    bottom: 4,
+  },
+  arrowHeader: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: 24,
   },
   button: {
     marginLeft: 5,
