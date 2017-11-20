@@ -1,5 +1,12 @@
 import React from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 
 import { palette } from '../utils/palette';
 import { sharedStyles } from '../utils/sharedStyles';
@@ -9,12 +16,12 @@ export default class SearchHistory extends React.Component {
     componentHeight: 0,
     historyHeight: 0,
     showScroll: false,
+    scroll: 0,
   }
 
   getScrollHeight (event) {
     let { height } = event.nativeEvent.layout;
 
-    console.log('componentHeight:', height)
     this.setState({ componentHeight: height })
   }
 
@@ -25,9 +32,6 @@ export default class SearchHistory extends React.Component {
       let { height } = event.nativeEvent.layout,
           historyHeight = this.state.historyHeight + height;
 
-      console.log('index:', index)
-      console.log('height:', height)
-      console.log('historyHeight:', historyHeight)
       this.setState({
         historyHeight,
         showScroll: (historyHeight >= this.state.componentHeight)
@@ -35,35 +39,79 @@ export default class SearchHistory extends React.Component {
     }
   }
 
+  handleScroll (event) {
+    let scrollNumber = event.nativeEvent.contentOffset.y
+    console.log('scroll:', scrollNumber)
+    this.setState({ scroll: scrollNumber });
+    console.log('this.state.scroll:', this.state.scroll)
+  }
+
+  scrollToTop () {
+    this.refs.scroll.scrollTo({ y: 0, animated: true });
+  }
+
+  scrollToBottom () {
+    this.refs.scroll.scrollToEnd({ animated: true });
+  }
+
+  renderArrows () {
+    if (this.state.showScroll) {
+      return (
+        <View style={styles.arrowContainer}>
+          <TouchableOpacity onPress={() => this.scrollToTop()}>
+            <Text style={[styles.arrow, { top: 5 }]}>{'\uf176'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.scrollToBottom()}>
+            <Text style={[styles.arrow, { top: this.state.componentHeight - 30 }]}>{'\uf175'}</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+  }
+
   render () {
     let historyStyles;
 
-    if (this.state.showScroll) historyStyles = { backgroundColor: 'pink' };
+    if (this.state.showScroll) historyStyles = { backgroundColor: palette.white };
     return (
-      <ScrollView onLayout={(e) => this.getScrollHeight(e)} style={styles.history}>
-        {this.props.history.map((conversion, i) => {
-          return (
-            <View key={i} style={styles.rowContainer}>
-              <View onLayout={(e) => this.checkHeight(e, i)} style={[styles.table, i !== 0 ? styles.borderTop : null, historyStyles]}>
-                <Text style={styles.text}>{conversion.amount} {conversion.origin}</Text>
-                <Text style={styles.text}>{conversion.converted} {conversion.target}</Text>
+      <View onLayout={(e) => this.getScrollHeight(e)} style={[styles.historyContainer, historyStyles]}>
+        <ScrollView onScroll={(e) => this.handleScroll(e)} scrollEventThrottle={0} ref='scroll'>
+          {this.props.history.map((conversion, i) => {
+            return (
+              <View key={i} style={styles.rowContainer}>
+                <View onLayout={(e) => this.checkHeight(e, i)} style={[styles.table, i !== 0 ? styles.borderTop : null]}>
+                  <Text style={styles.text}>{conversion.amount} {conversion.origin}</Text>
+                  <Text style={styles.text}>{conversion.converted} {conversion.target}</Text>
+                </View>
               </View>
-            </View>
-          )
-        }
-        )}
-      </ScrollView>
+            )
+          })}
+        </ScrollView>
+        {this.renderArrows()}
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  arrow: {
+    fontFamily: 'fontAwesome',
+    textAlign: 'center',
+    fontSize: 14,
+    color: palette.navy,
+    backgroundColor: 'transparent',
+  },
+  arrowContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 2,
+  },
   borderTop: {
     borderColor: 'transparent',
     borderTopColor: palette.black,
     borderWidth: 1,
   },
-  history: {
+  historyContainer: {
     marginTop: 25,
     marginBottom: 25,
     flex: 1,
