@@ -11,6 +11,8 @@ import {
 import { palette } from '../utils/palette';
 import { sharedStyles } from '../utils/sharedStyles';
 
+import CustomButton from './CustomButton';
+
 export default class Home extends React.Component {
   static navigationOptions = {
     tabBarLabel: 'HackPacker',
@@ -45,20 +47,20 @@ export default class Home extends React.Component {
       <View style={sharedStyles.container}>
         <Text style={styles.title}>HackPacker</Text>
         <View style={[styles.buttonContainer, sharedStyles.topMargin]}>
-          <Image source={require('../images/fade.png')} style={styles.buttonImage} />
-          <TouchableHighlight onPress={this.onPressChangeMoney.bind(this)}>
-            <Text style={styles.button}>Change Money</Text>
-          </TouchableHighlight>
+          <CustomButton onPress={() => this.onPressChangeMoney()}>
+            {pressStatus => (
+                <Text style={ pressStatus ? styles.textPress : styles.text }>Change Money</Text>
+              )
+            }
+          </CustomButton>
         </View>
         <View style={[styles.buttonContainer, sharedStyles.topMargin]} >
-          <TouchableOpacity onPress={this.onPressRates.bind(this)}>
-            <Image
-              source={require('../images/fade.png')}
-              style={styles.buttonImage}
-              transform={[{ rotate: '180deg' }]}
-              />
-            <Text style={styles.button}>View Rates</Text>
-          </TouchableOpacity>
+          <CustomButton onPress={() => this.onPressRates()}>
+            {pressStatus => (
+                <Text style={ pressStatus ? styles.textPress : styles.text }>View Rates</Text>
+              )
+            }
+          </CustomButton>
         </View>
       </View>
     );
@@ -66,32 +68,19 @@ export default class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    // backgroundColor: palette.grey,
-    backgroundColor: 'transparent',
-    // color: palette.white,
-    color: palette.black,
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingLeft: 30,
-    paddingRight: 30,
-    textAlign: 'center',
-  },
   buttonContainer: {
     position: 'relative',
     height: 45,
-    backgroundColor: palette.grey,
-    borderRadius: 3,
   },
-  buttonImage: {
-    flex: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'stretch',
-    opacity: 0.2,
+  text: {
+    textAlign: 'center',
+    margin: 10,
+    color: palette.purple,
+  },
+  textPress: {
+    textAlign: 'center',
+    margin: 10,
+    color: palette.white,
   },
   title: {
     backgroundColor: 'transparent',
